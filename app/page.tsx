@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Globe, Sun, Moon, X } from "lucide-react";
+import { Globe, Sun, Moon } from "lucide-react";
 import TestCanvas from "./components/3d/TestCanvas";
 import TechStack from "./components/ui/TechStack";
 import Projects from "./components/ui/Projects";
 import Contact from "./components/ui/Contact";
-import AdminPortal from "./components/ui/AdminPortal";
 
 // COMPREHENSIVE MULTI-LANGUAGE TRANSLATION MATRIX
 const GLOBAL_DICTIONS = {
@@ -83,7 +82,6 @@ const GLOBAL_DICTIONS = {
 export default function Home() {
   const [lang, setLang] = useState<"en" | "fr" | "es" | "ar">("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [showSecretAdmin, setShowSecretAdmin] = useState(false);
   const d = GLOBAL_DICTIONS[lang];
 
   return (
@@ -112,9 +110,8 @@ export default function Home() {
         theme === "dark" ? "border-white/5 bg-[#03050c]/80" : "border-slate-200/60 bg-white/70"
       }`}>
         
-        {/* LOGO INITIALS WITH HIDDEN DOUBLE-CLICK EVENT LISTENER */}
+        {/* LOGO INITIALS WITH STANDARD SELECTION CAPABILITIES */}
         <div 
-          onDoubleClick={() => setShowSecretAdmin(true)}
           className="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 cursor-pointer select-none active:scale-95 transition-transform duration-300"
           title="FA Matrix"
         >
@@ -306,22 +303,6 @@ export default function Home() {
         </section>
 
       </div>
-
-      {/* --- SECRET FLOATING SUPERUSER MODAL TERMINAL OVERLAY --- */}
-      {showSecretAdmin && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 sm:p-10 transition-all duration-300">
-          <div className="relative w-full max-w-2xl bg-[#03050c] border border-white/10 rounded-3xl p-6 sm:p-8 max-h-[90vh] overflow-y-auto shadow-2xl">
-            <button 
-              onClick={() => setShowSecretAdmin(false)}
-              className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-rose-600 text-slate-400 hover:text-white transition-all duration-200"
-            >
-              <X size={18} />
-            </button>
-            <AdminPortal />
-          </div>
-        </div>
-      )}
-
     </main>
   );
 }
