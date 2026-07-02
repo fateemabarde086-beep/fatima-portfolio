@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Globe, Sun, Moon } from "lucide-react";
 import TestCanvas from "./components/3d/TestCanvas";
 import TechStack from "./components/ui/TechStack";
@@ -80,6 +81,7 @@ const GLOBAL_DICTIONS = {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [lang, setLang] = useState<"en" | "fr" | "es" | "ar">("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const d = GLOBAL_DICTIONS[lang];
@@ -110,8 +112,9 @@ export default function Home() {
         theme === "dark" ? "border-white/5 bg-[#03050c]/80" : "border-slate-200/60 bg-white/70"
       }`}>
         
-        {/* LOGO INITIALS WITH STANDARD SELECTION CAPABILITIES */}
+        {/* LOGO INITIALS WITH HIDDEN DOUBLE-CLICK ROUTING HANDSHAKE */}
         <div 
+          onDoubleClick={() => router.push("/admin/messages")}
           className="text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 cursor-pointer select-none active:scale-95 transition-transform duration-300"
           title="FA Matrix"
         >
