@@ -71,12 +71,25 @@ export default function Contact({ currentLang }: ContactProps) {
     setStatus(null);
 
     try {
-      // Artificial short delay to simulate an advanced secure transmission handshake
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Direct live delivery connection to your analytics pipeline
+      const res = await fetch("/api/admin/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          newMessage: {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+          },
+        }),
+      });
 
-      // Force a flawless success state for portfolio presentation
-      setStatus({ type: "success", text: t.success });
-      setFormData({ name: "", email: "", message: "" });
+      if (res.ok) {
+        setStatus({ type: "success", text: t.success });
+        setFormData({ name: "", email: "", message: "" });
+      } else {
+        setStatus({ type: "error", text: t.error });
+      }
     } catch (err) {
       setStatus({ type: "error", text: t.error });
     } finally {
