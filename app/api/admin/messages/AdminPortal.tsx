@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldAlert, Loader2, Mail, User, Clock, Terminal } from "lucide-react";
+import { ShieldAlert, Loader2, Mail, User, Clock, Terminal, Reply } from "lucide-react";
 
 interface Message {
   id: string;
@@ -34,7 +34,8 @@ export default function AdminPortal() {
 
       if (res.ok) {
         setIsAuthenticated(true);
-        setMessages(data.messages);
+        // Fallback safely to an empty array if database entries are clear
+        setMessages(data.messages || []);
       } else {
         setError(data.error || "Clearance failed.");
       }
@@ -101,10 +102,12 @@ export default function AdminPortal() {
 
       <div className="grid grid-cols-1 gap-4">
         {messages.length === 0 ? (
-          <p className="text-xs text-slate-500 font-mono">No incoming payload leads received in this matrix cycle.</p>
+          <div className="p-12 text-center border border-dashed border-white/5 rounded-2xl text-slate-500 font-mono text-xs">
+            No incoming payload leads received in this matrix cycle.
+          </div>
         ) : (
           messages.map((msg) => (
-            <div key={msg.id} className="p-6 rounded-2xl border border-white/5 bg-[#080c16]/40 backdrop-blur-md space-y-4 hover:border-emerald-500/20 transition duration-300">
+            <div key={msg.id} className="p-6 rounded-2xl border border-white/5 bg-[#080c16]/40 backdrop-blur-md space-y-4 hover:border-emerald-500/20 transition duration-300 relative group">
               <div className="flex flex-wrap justify-between items-start gap-2 border-b border-white/5 pb-3">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-xs font-bold text-white">
@@ -114,8 +117,17 @@ export default function AdminPortal() {
                     <Mail size={13} className="text-purple-400" /> {msg.email}
                   </div>
                 </div>
-                <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 bg-white/5 px-2.5 py-1 rounded-md">
-                  <Clock size={11} /> {msg.timestamp}
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 bg-white/5 px-2.5 py-1 rounded-md">
+                    <Clock size={11} /> {msg.timestamp}
+                  </div>
+                  {/* Quick-tap response communication link */}
+                  <a 
+                    href={`mailto:${msg.email}?subject=RE: Portfolio Inbound Inquiry`}
+                    className="flex items-center gap-1 text-[10px] font-mono bg-purple-600/20 hover:bg-purple-600/40 text-purple-300 px-3 py-1 rounded-md transition duration-200"
+                  >
+                    <Reply size={11} /> Reply
+                  </a>
                 </div>
               </div>
               <p className="text-xs text-slate-300 leading-relaxed font-light">{msg.message}</p>
