@@ -1,42 +1,30 @@
 import { NextResponse } from "next/server";
+import { kv } from "@vercel/kv";
 
 const ADMIN_SECRET_KEY = "FA_SECURE_MATRIX_2026"; 
-
-// REAL-TIME RUNTIME STORAGE MATRIX (Resets mockup values to zero)
-let portfolioMetrics = {
-  totalViews: 0,
-  uniqueVisitors: 0,
-  cvDownloads: 0,
-  githubClicks: 0,
-  linkedinClicks: 0,
-  liveVisitors: 1,
-};
-
-// Array to store real data incoming from your actual contact form submissions
-let activeMessages: any[] = [];
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
     const { passkey, trackEvent, newMessage } = body;
 
-    // 1. ANONYMOUS PORTFOLIO EVENT TRACKING PIPELINE
+    // 1. ANONYMOUS PORTFOLIO EVENT TRACKING PIPELINE (Persistent cloud count)
     if (trackEvent) {
       if (trackEvent === "page_view") {
-        portfolioMetrics.totalViews += 1;
-        // Simple scaling simulation for unique session estimation
-        if (portfolioMetrics.totalViews === 1 || Math.random() > 0.4) {
-          portfolioMetrics.uniqueVisitors += 1;
+        await kv.incr("metrics:totalViews");
+        // Simple scaling fallback simulation for unique metrics
+        if (Math.random() > 0.4) {
+          await kv.incr("metrics:uniqueVisitors");
         }
       }
-      if (trackEvent === "cv_download") portfolioMetrics.cvDownloads += 1;
-      if (trackEvent === "github_click") portfolioMetrics.githubClicks += 1;
-      if (trackEvent === "linkedin_click") portfolioMetrics.linkedinClicks += 1;
+      if (trackEvent === "cv_download") await kv.incr("metrics:cvDownloads");
+      if (trackEvent === "github_click") await kv.incr("metrics:githubClicks");
+      if (trackEvent === "linkedin_click") await kv.incr("metrics:linkedinClicks");
       
-      return NextResponse.json({ success: true, metrics: portfolioMetrics }, { status: 200 });
+      return NextResponse.json({ success: true }, { status: 200 });
     }
 
-    // 2. INBOUND CONTACT FORM CAPTURE PIPELINE (For real visitors submitting messages)
+    // 2. INBOUND CONTACT FORM CAPTURE PIPELINE (Saves messages permanently)
     if (newMessage) {
       const { name, email, message } = newMessage;
       
@@ -45,15 +33,15 @@ export async function POST(request: Request) {
       }
 
       const formattedMessage = {
-        id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        id: `msg-${Date.now()}`,
         name,
         email,
         message,
         timestamp: new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" })
       };
 
-      // Push real submission data into your live storage deck
-      activeMessages.unshift(formattedMessage);
+      // Push real submission data into a persistent Redis list wrapper
+      await kv.lpush("portfolio:messages", JSON.stringify(formattedMessage));
       
       return NextResponse.json({ success: true }, { status: 200 });
     }
@@ -66,14 +54,33 @@ export async function POST(request: Request) {
       );
     }
 
-    // Return genuine runtime data tracking blocks
+    // 4. FETCH ALL GENUINE PERSISTED METRICS FROM VERCEL KV
+    const totalViews = (await kv.get<number>("metrics:totalViews")) || 0;
+    const uniqueVisitors = (await kv.get<number>("metrics:uniqueVisitors")) || 0;
+    const cvDownloads = (await kv.get<number>("metrics:cvDownloads")) || 0;
+    const githubClicks = (await kv.get<number>("metrics:githubClicks")) || 0;
+    const linkedinClicks = (await kv.get<number>("metrics:linkedinClicks")) || 0;
+
+    // Pull real stored messages list from the cloud database stream
+    const rawMessages = await kv.lrange("portfolio:messages", 0, -1);
+    const realMessages = rawMessages.map((msg) => (typeof msg === "string" ? JSON.parse(msg) : msg));
+
+    const dynamicMetrics = {
+      totalViews,
+      uniqueVisitors,
+      cvDownloads,
+      githubClicks,
+      linkedinClicks,
+      liveVisitors: 1,
+    };
+
     return NextResponse.json({ 
       success: true, 
-      messages: activeMessages,
-      metrics: portfolioMetrics
+      messages: realMessages,
+      metrics: dynamicMetrics
     }, { status: 200 });
 
   } catch (error) {
-    return NextResponse.json({ error: "Internal administrative query fault." }, { status: 500 });
+    return NextResponse.json({ error: "Internal cloud database matrix fault." }, { status: 500 });
   }
 }
