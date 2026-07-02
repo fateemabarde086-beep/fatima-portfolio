@@ -1,16 +1,27 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@vercel/kv";
+import { createClient } from "redis";
 
-// Manually initialize the client using your locked STORAGE environment prefix keys
+// Initialize the standard Redis client using your live environment string
 const kv = createClient({
-  url: process.env.STORAGE_REST_API_URL!,
-  token: process.env.STORAGE_REST_API_TOKEN!,
+  url: process.env.REDIS_URL
 });
+
+// Self-healing connection wrapper for serverless invocation stability
+let isConnected = false;
+async function connectDb() {
+  if (!isConnected) {
+    kv.on("error", (err: any) => console.error("Redis Cluster Connection Fault:", err));
+    await kv.connect();
+    isConnected = true;
+  }
+}
 
 const ADMIN_SECRET_KEY = "FA_SECURE_MATRIX_2026"; 
 
 export async function POST(request: Request) {
   try {
+    await connectDb();
+    
     const body = await request.json();
     const { passkey, trackEvent, newMessage } = body;
 
@@ -45,7 +56,7 @@ export async function POST(request: Request) {
         timestamp: new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" })
       };
 
-      await kv.lpush("portfolio:messages", JSON.stringify(formattedMessage));
+      await kv.lPush("portfolio:messages", JSON.stringify(formattedMessage));
       
       return NextResponse.json({ success: true }, { status: 200 });
     }
@@ -58,15 +69,15 @@ export async function POST(request: Request) {
       );
     }
 
-    // 4. FETCH ALL GENUINE PERSISTED METRICS FROM CUSTOM REDIS STORAGE
-    const totalViews = (await kv.get<number>("metrics:totalViews")) || 0;
-    const uniqueVisitors = (await kv.get<number>("metrics:uniqueVisitors")) || 0;
-    const cvDownloads = (await kv.get<number>("metrics:cvDownloads")) || 0;
-    const githubClicks = (await kv.get<number>("metrics:githubClicks")) || 0;
-    const linkedinClicks = (await kv.get<number>("metrics:linkedinClicks")) || 0;
+    // 4. FETCH ALL PERSISTED METRICS FROM LIVE STORAGE
+    const totalViews = Number(await kv.get("metrics:totalViews")) || 0;
+    const uniqueVisitors = Number(await kv.get("metrics:uniqueVisitors")) || 0;
+    const cvDownloads = Number(await kv.get("metrics:cvDownloads")) || 0;
+    const githubClicks = Number(await kv.get("metrics:githubClicks")) || 0;
+    const linkedinClicks = Number(await kv.get("metrics:linkedinClicks")) || 0;
 
-    const rawMessages = await kv.lrange("portfolio:messages", 0, -1);
-    const realMessages = rawMessages.map((msg) => (typeof msg === "string" ? JSON.parse(msg) : msg));
+    const rawMessages = await kv.lRange("portfolio:messages", 0, -1);
+    const realMessages = rawMessages.map((msg: any) => JSON.parse(msg));
 
     const dynamicMetrics = {
       totalViews,
