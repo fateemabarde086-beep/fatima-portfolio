@@ -12,9 +12,10 @@ import Contact from "./components/ui/Contact";
 const GLOBAL_DICTIONS = {
   en: {
     navHome: "Home", navAbout: "About", navTech: "Tech Stack", navProj: "Projects", navContact: "Contact",
-    connectBtn: "Let's Connect ↗", status: "Available for opportunities", greeting: "Hi, I'm",
+    connectBtn: "Let's Connect ↗", 
+    status: "🟢 Open to Work: Remote • Hybrid • On-site", greeting: "Hi, I'm",
     heroTitlePre: "Software Engineer ", heroTitlePost: "| Cloud & Security Enthusiast",
-    heroDesc: "I build secure, scalable, and user-focused applications and cloud solutions that solve real-world problems.",
+    heroDesc: "I develop secure, scalable, and user-centric software applications with a passion for cloud technologies and modern engineering practices. Currently open to remote, hybrid, and on-site roles globally.",
     viewWork: "View My Work", downloadCv: "Download CV",
     statProj: "GitHub Projects", statExp: "Years Experience", statTech: "Technologies", statExec: "Execution Matrix",
     aboutPrefix: "01 // Identity Matrix", aboutTitle: "About Me",
@@ -29,9 +30,10 @@ const GLOBAL_DICTIONS = {
   },
   fr: {
     navHome: "Accueil", navAbout: "À Propos", navTech: "Technologies", navProj: "Projets", navContact: "Contact",
-    connectBtn: "Contactez-moi ↗", status: "Disponible pour des opportunités", greeting: "Salut, je suis",
+    connectBtn: "Contactez-moi ↗", 
+    status: "🟢 Disponible: À distance • Hybride • Sur site", greeting: "Salut, je suis",
     heroTitlePre: "Ingénieur Logiciel ", heroTitlePost: "| Passionné Cloud & Sécurité",
-    heroDesc: "Je construis des applications sécurisées, évolutives et centrées sur l'utilisateur ainsi que des solutions cloud qui résolvent des problèmes réels.",
+    heroDesc: "Je développe des applications logicielles sécurisées, évolutives et centrées sur l'utilisateur, avec une passion pour les technologies cloud. Actuellement disponible pour des rôles à distance ou hybrides.",
     viewWork: "Voir Mon Travail", downloadCv: "Télécharger le CV",
     statProj: "Projets GitHub", statExp: "Années d'Expérience", statTech: "Technologies", statExec: "Matrice d'Exécution",
     aboutPrefix: "01 // Matrice d'Identité", aboutTitle: "À Propos de Moi",
@@ -46,9 +48,10 @@ const GLOBAL_DICTIONS = {
   },
   es: {
     navHome: "Inicio", navAbout: "Sobre Mí", navTech: "Tecnologías", navProj: "Proyectos", navContact: "Contacto",
-    connectBtn: "Conectemos ↗", status: "Disponible para oportunidades", greeting: "Hola, soy",
+    connectBtn: "Conectemos ↗", 
+    status: "🟢 Abierta a trabajo: Remoto • Híbrido • Presencial", greeting: "Hola, soy",
     heroTitlePre: "Ingeniera de Software ", heroTitlePost: "| Entusiasta de Cloud y Seguridad",
-    heroDesc: "Construyo aplicaciones seguras, escalables y centradas en el usuario y soluciones en la nube que resuelven problemas del mundo real.",
+    heroDesc: "Desarrollo aplicaciones de software seguras, escalables y centradas en el usuario, con pasión por las tecnologías en la nube. Actualmente disponible para oportunidades remotas, híbridas y presenciales.",
     viewWork: "Ver Mi Trabajo", downloadCv: "Descargar CV",
     statProj: "Proyectos GitHub", statExp: "Años de Experiencia", statTech: "Tecnologías", statExec: "Matriz de Ejecución",
     aboutPrefix: "01 // Matriz de Identidad", aboutTitle: "Sobre Mí",
@@ -63,10 +66,11 @@ const GLOBAL_DICTIONS = {
   },
   ar: {
     navHome: "الرئيسية", navAbout: "حول", navTech: "التقنيات", navProj: "المشاريع", navContact: "اتصل بنا",
-    connectBtn: "لنبدأ الاتصال ↗", status: "متاحة للفرص المهنية", greeting: "مرحباً، أنا",
+    connectBtn: "لنبدأ الاتصال ↗", 
+    status: "🟢 متاحة للعمل: عن بعد • هجين • في الموقع", greeting: "مرحباً، أنا",
     heroTitlePre: "مهندسة برمجيات ", heroTitlePost: "| مهتمة بالسحاب والأمن الرقمي",
-    heroDesc: "أقوم ببناء تطبيقات وحلول سحابية آمنة وقابلة للتطوير وموجهة للمستخدم تحل مشاكل العالم الحقيقي.",
-    viewWork: "عرض أعمالي", downloadCv: "تحميل السيرة الذاتية",
+    heroDesc: "أقوم بتطوير تطبيقات برمجية آمنة وقابلة للتطوير وموجهة للمستخدم مع شغف بالتقنيات السحابية وممارسات الهندسة الحديثة. متاحة حالياً للفرص عن بعد، الهجينة، وفي الموقع.",
+    viewWork: "عرض أعمالI", downloadCv: "تحميل السيرة الذاتية",
     statProj: "مشاريع GitHub", statExp: "سنوات الخبرة", statTech: "التقنيات المستخدمة", statExec: "مصفوفة التنفيذ",
     aboutPrefix: "01 // مصفوفة الهوية", aboutTitle: "معلومات عني",
     aboutP1: "أنا خريجة علوم حاسب آلي متخصصة في هندسة البنية التحتية للبرمجيات، ونماذج النشر السحابي الآمنة، وهندسة البنيات الكاملة (Full-Stack).",
@@ -171,10 +175,14 @@ export default function Home() {
         {/* --- DUAL COLUMN HERO SECTION --- */}
         <section className="min-h-[80vh] flex flex-col lg:flex-row justify-center items-center gap-12">
           <div className="flex-[1.2] flex flex-col justify-center items-start text-start">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-500 text-xs font-medium mb-6 animate-pulse">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+            
+            {/* STYLED INTERNATIONALLY READABLE AVAILABILITY BADGE */}
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold mb-6 animate-pulse transition-all duration-300 ${
+              theme === 'dark' ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700'
+            }`}>
               {d.status}
             </div>
+
             <p className={theme === 'dark' ? 'text-lg text-slate-400 font-light mb-1' : 'text-lg text-slate-500 font-light mb-1'}>{d.greeting}</p>
             <h1 className={`text-6xl sm:text-7xl font-black tracking-tight mb-4 transform hover:scale-[1.01] transition-transform duration-500 ${
               theme === 'dark' ? 'bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-slate-400' : 'text-slate-800'
@@ -184,7 +192,7 @@ export default function Home() {
             <h2 className="text-lg sm:text-xl font-bold text-purple-600 tracking-wide mb-6">
               {d.heroTitlePre}<span className={theme === 'dark' ? 'text-slate-500 font-normal' : 'text-slate-400 font-normal'}>{d.heroTitlePost}</span>
             </h2>
-            <p className={`max-w-xl text-base leading-relaxed mb-8 font-light ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
+            <p className={`max-w-xl text-base leading-relaxed mb-8 font-light transition-colors duration-500 ${theme === 'dark' ? 'text-slate-400' : 'text-slate-600'}`}>
               {d.heroDesc}
             </p>
             <div className="flex gap-4">
